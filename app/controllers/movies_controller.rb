@@ -1,3 +1,4 @@
+
 class MoviesController < ApplicationController
 
   def show
@@ -7,7 +8,11 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    @all_ratings = Movie.all_ratings
+    @movies = Movie.with_ratings(ratings_list, sort_by)
+    @ratings_to_show = ratings_hash
+    @sort_by
+    byebug
   end
 
   def new
@@ -18,6 +23,10 @@ class MoviesController < ApplicationController
     @movie = Movie.create!(movie_params)
     flash[:notice] = "#{@movie.title} was successfully created."
     redirect_to movies_path
+  end
+  
+  def sort_by
+    params[:sort_by] || 'id'
   end
 
   def edit
@@ -36,6 +45,14 @@ class MoviesController < ApplicationController
     @movie.destroy
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
+  end
+  
+  def ratings_hash
+    Hash[ratings_list.collect {|item| [item,"1"]}]
+  end
+  
+  def ratings_list
+    params[:ratings]&.keys || Movie.all_ratings
   end
 
   private
