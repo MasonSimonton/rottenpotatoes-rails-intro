@@ -11,8 +11,10 @@ class MoviesController < ApplicationController
     @all_ratings = Movie.all_ratings
     @movies = Movie.with_ratings(ratings_list, sort_by)
     @ratings_to_show = ratings_hash
-    @sort_by
-    byebug
+    @sort_by = sort_by
+    session[:sort_by] = sort_by
+    session[:ratingses] = ratings_list
+    
   end
 
   def new
@@ -26,7 +28,7 @@ class MoviesController < ApplicationController
   end
   
   def sort_by
-    params[:sort_by] || 'id'
+    params[:sort_by] || session[:sort_by] || 'id'
   end
 
   def edit
@@ -52,7 +54,7 @@ class MoviesController < ApplicationController
   end
   
   def ratings_list
-    params[:ratings]&.keys || Movie.all_ratings
+    params[:ratings]&.keys || session[:ratingses] || Movie.all_ratings
   end
 
   private
