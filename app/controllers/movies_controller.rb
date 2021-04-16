@@ -1,5 +1,6 @@
 
 class MoviesController < ApplicationController
+  before_action :force_index_redirect, only:[:index]
 
   def show
     id = params[:id] # retrieve movie ID from URI route
@@ -58,6 +59,15 @@ class MoviesController < ApplicationController
   end
 
   private
+  
+  def force_index_redirect
+    if !params[:ratings]&.keys || !params[:sort_by]
+      flash.keep
+      url = movies_path(sort_by: sort_by, ratings: ratings_hash)
+      redirect_to url
+    end
+  end
+  
   # Making "internal" methods private is not required, but is a common practice.
   # This helps make clear which methods respond to requests, and which ones do not.
   def movie_params
