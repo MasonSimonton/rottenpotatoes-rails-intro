@@ -23,9 +23,14 @@ class MoviesController < ApplicationController
   end
 
   def create
-    @movie = Movie.create!(movie_params)
-    flash[:notice] = "#{@movie.title} was successfully created."
-    redirect_to movies_path
+    @movie = Movie.new(movie_params)
+      if @movie.valid?
+          @movie.save
+        flash[:notice] = "#{@movie.title} was successfully created."
+        redirect_to movies_path
+      else
+          render :new
+      end
   end
   
   def sort_by
